@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ops Consolidation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 50px;
+        }
+        .container {
+            width: 50%;
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: white;
+            background: blue;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .form-group {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            flex: 1;
+        }
+        .form-group input {
+            flex: 4;
+            padding: 5px;
+        }
+        .form-group button {
+            flex: 1;
+        }
+        .actions {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Ops Consolidation</h1>
+        <form id="uploadForm">
+            <div class="form-group">
+                <label>Report 1</label>
+                <input type="text" id="report1" readonly>
+                <input type="file" id="fileInput1" style="display: none;" onchange="showFilePath(1)">
+                <button type="button" onclick="document.getElementById('fileInput1').click()">Browse</button>
+            </div>
+            <div class="form-group">
+                <label>Report 2</label>
+                <input type="text" id="report2" readonly>
+                <input type="file" id="fileInput2" style="display: none;" onchange="showFilePath(2)">
+                <button type="button" onclick="document.getElementById('fileInput2').click()">Browse</button>
+            </div>
+            <div class="form-group">
+                <label>Report 3</label>
+                <input type="text" id="report3" readonly>
+                <input type="file" id="fileInput3" style="display: none;" onchange="showFilePath(3)">
+                <button type="button" onclick="document.getElementById('fileInput3').click()">Browse</button>
+            </div>
+            <div class="form-group">
+                <label>Report 4</label>
+                <input type="text" id="report4" readonly>
+                <input type="file" id="fileInput4" style="display: none;" onchange="showFilePath(4)">
+                <button type="button" onclick="document.getElementById('fileInput4').click()">Browse</button>
+            </div>
+            <div class="actions">
+                <button type="button" onclick="submitForm()">Consolidate</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function showFilePath(reportNumber) {
+            var fileInput = document.getElementById('fileInput' + reportNumber);
+            var filePath = fileInput.value.split('\\').pop();
+            document.getElementById('report' + reportNumber).value = filePath;
+        }
+
+        function submitForm() {
+            var formData = new FormData();
+            for (var i = 1; i <= 4; i++) {
+                var fileInput = document.getElementById('fileInput' + i);
+                if (fileInput.files[0]) {
+                    formData.append('file' + i, fileInput.files[0]);
+                }
+            }
+
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => alert(data.message))
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
